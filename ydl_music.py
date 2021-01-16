@@ -1,41 +1,54 @@
 import os
 import sys
-import colorama
-from colorama import Fore
 import pyfiglet
 import youtube_dl
+from colorama import Fore
+
+save_dir = "./music/"
+if not os.path.exists(save_dir):
+    os.mkdir(save_dir)
+outtmpl = "%(title)s.%(ext)s"
+
+ydl_opts = {
+    "outtmpl": save_dir + outtmpl,
+    "format": "bestaudio/best",
+    "postprocessors": [{
+        "key": "FFmpegExtractAudio",
+        "preferredcodec": "mp3",
+        "preferredquality": "192",
+    }],
+}
+
+
+def download(url):
+    print("> Downloading ...")
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+        print(">" + Fore.LIGHTGREEN_EX + " Download complete!" + Fore.RESET)
 
 
 def main():
-    music = input(Fore.CYAN + "> Enter url: ")
-    while not music:
-        print(Fore.RED + "> Not entered")
-        music = input(Fore.CYAN + "> Enter url: ")
-    save_dir = "./music/"
-    outtmpl = "%(title)s.%(ext)s"
+    try:
+        print("")
+        url = input("\n> Enter url : ")
+        while not url:
+            print(">" + Fore.RED + " Not entered" + Fore.RESET)
+            url = input("> Enter url : ")
+        download(url)
+    except Exception as e:
+        raise e
 
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
-
-    ydl_opts = {
-        "outtmpl": save_dir + outtmpl,
-        "format": "bestaudio/best",
-        "postprocessors": [{
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        print(Fore.WHITE + "> Downloading ...")
-        ydl.download([music])
-        print(Fore.GREEN + "\n> Download Complete")
 
 if __name__ == "__main__":
     figlet = pyfiglet.figlet_format("YDL Music")
     print(Fore.LIGHTRED_EX + figlet)
-    print("Youtube, SoundCloud, Bandcamp, etc...\n")
-    try: 
+    print("・Youtube, SoundCloud, Bandcamp, etc...\n")
+    print("・Ctrl + C to exit the program")
+    print("---------------------------------------------\n" + Fore.RESET)
+    try:
         main()
+        for i in range(100):
+            main()
     except KeyboardInterrupt:
-        print(Fore.LIGHTGREEN_EX + "\n> Exit program")
+        print("\n>" + Fore.GREEN + " Exit program")
+        sys.exit()
