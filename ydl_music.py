@@ -21,22 +21,26 @@ ydl_opts = {
 
 
 def download(url):
-    print("> Downloading ...")
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-        print(">" + Fore.LIGHTGREEN_EX + " Download complete!" + Fore.RESET)
+    try:
+        print("> Downloading ...")
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+            print(">" + Fore.LIGHTGREEN_EX + " Download complete!" + Fore.RESET)
+    except Exception as e:
+        raise e
 
 
 def main():
     try:
-        print("")
         url = input("\n> Enter url : ")
         while not url:
             print(">" + Fore.RED + " Not entered" + Fore.RESET)
             url = input("> Enter url : ")
         download(url)
-    except Exception as e:
-        raise e
+    except youtube_dl.utils.DownloadError:
+        print(">" + Fore.RED + " The URL is incorrect or does not exist. Please enter the correct URL." + Fore.RESET)
+
+
 
 
 if __name__ == "__main__":
@@ -46,8 +50,7 @@ if __name__ == "__main__":
     print("・Ctrl + C to exit the program")
     print("---------------------------------------------\n" + Fore.RESET)
     try:
-        main()
-        for i in range(100):
+        while True:
             main()
     except KeyboardInterrupt:
         print("\n>" + Fore.GREEN + " Exit program")
